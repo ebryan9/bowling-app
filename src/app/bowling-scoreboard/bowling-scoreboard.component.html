@@ -1,0 +1,46 @@
+<div class="scoreboard-container">
+  <h1>Bowling Scoreboard</h1>
+
+  <table class="scoreboard-table">
+    <tr>
+      <th></th>
+      <th *ngFor="let frameNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">{{ frameNumber }}</th>
+      <th>Total</th>
+    </tr>
+    <!-- Table rows for players -->
+    <tr *ngFor="let player of players">
+      <td>{{ player.name }}</td>
+      <!-- Frame scores for each player -->
+      <td *ngFor="let frame of player.frames; index as i">
+        <div class="rolls">
+          <div class=""roll-1>
+            <ng-container>
+              {{ isStrike(frame.roll1) ? 'X' : frame.roll1 }}
+            </ng-container>
+          </div>
+
+          <div class="roll-2">
+            <ng-container>
+              {{ !isStrike(frame.roll1) && isSpare(frame.roll1, frame.roll2) ? '/' : frame.roll2 }}
+            </ng-container>
+          </div>
+
+          <div class="roll-3" *ngIf="frame.roll3">
+            <ng-container>
+              {{ isStrike(frame.roll3) ? 'X' : frame.roll3 }}
+            </ng-container>
+          </div>
+
+        </div>
+
+        <div class="frame-score">
+          {{ calculateFrameScore(player.frames)[i] }}
+        </div>
+      </td>
+      <!-- Total score for each player -->
+      <td>{{ calculateTotalScore(player.frames) }}</td>
+    </tr>
+  </table>
+
+  <button class="simulation-btn" (click)="simulateGamePlay()">Start Game Simulation</button>
+</div>

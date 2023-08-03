@@ -1,0 +1,8 @@
+<div>
+  <p>Click number of pins to be knocked down.</p>
+  <div class="buttons-container">
+    <button class="roll-btn" *ngFor="let buttonNumber of filterButtons()" (click)="onRollSelected(buttonNumber)">
+      {{ buttonNumber }}
+    </button>
+  </div>
+</div>

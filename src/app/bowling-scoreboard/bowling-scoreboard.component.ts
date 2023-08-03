@@ -13,14 +13,26 @@ interface INewPlayerForm {
   styleUrls: ['./bowling-scoreboard.component.scss']
 })
 export class BowlingScoreboardComponent implements OnInit {
-  currentPlayerIndex = 0;
+  currentPlayerIndex: number = 0;
+  currentRollIndex: number = 0;
+  currentFrameIndex: number = 0;
   frameTotals: FrameTotals = {} as FrameTotals;
   players: Player[] = [];
   showForm: boolean = false;
   newPlayer: Player = {} as Player;
+  selectedButtons: { [playerIndex: number]: number[] } = {};
+  remainingPinsAfterRoll1: number = 10;
 
   newPlayerForm: FormGroup<INewPlayerForm>;
   playerNameControl: FormControl<string | null>;
+
+  get isTenthFrame(): boolean {
+    return this.currentFrameIndex === 9;
+  }
+
+  get isGameOver(): boolean {
+    return this.currentFrameIndex === 10 && this.currentPlayerIndex === 0;
+  }
 
   constructor(private readonly bowlingService: BowlingService) {
     this.playerNameControl = new FormControl(null, [Validators.required],);
@@ -162,64 +174,148 @@ export class BowlingScoreboardComponent implements OnInit {
     return totalScore;
   }
 
-  // // Method to simulate the game play for all players
-  simulateGamePlay() {
-    const totalFrames = 10;
-    const totalPlayers = this.players.length;
-
-    for (let frameIndex = 0; frameIndex < totalFrames; frameIndex++) {
-      for (let playerIndex = 0; playerIndex < totalPlayers; playerIndex++) {
-        const currentPlayer = this.players[playerIndex];
-        const currentFrame = currentPlayer.frames[frameIndex];
-
-        // Simulate player making the first roll
-        const pinsKnockedDownRoll1 = Math.floor(Math.random() * 11); // Generate random number between 0 and 10
-        currentFrame.roll1 = pinsKnockedDownRoll1;
-
-        // Simulate player making the second roll
-        const remainingPinsAfterRoll1 = 10 - pinsKnockedDownRoll1;
-
-        const pinsKnockedDownRoll2 = frameIndex === 9
-          ? Math.floor(Math.random() * (remainingPinsAfterRoll1)) // Generate random number between 0 and remaining pins for 10th frame
-          : Math.floor(Math.random() * (11 - currentFrame.roll1)); // Generate random number between 0 and 10 for other frames
-        currentFrame.roll2 = pinsKnockedDownRoll2;
-
-        // Check if it's a strike or spare
-        if (this.isStrike(currentFrame.roll1)) {
-          currentFrame.score = 10 + (this.players[playerIndex + 1]?.frames[frameIndex]?.roll1 ?? 0);
-        } else if (this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
-          currentFrame.score = 10 + (this.players[playerIndex + 1]?.frames[frameIndex]?.roll1 ?? 0);
-        } else {
-          currentFrame.score = currentFrame.roll1 + currentFrame.roll2;
-        }
-
-        // Handle the 10th frame
-        if (frameIndex === totalFrames - 1) {
-          if (this.isStrike(currentFrame.roll1)) {
-            const bonusRoll = Math.floor(Math.random() * 11); // Generate random number between 0 and 10
-            currentFrame.roll3 = bonusRoll;
-            currentFrame.score += bonusRoll;
-          } else if (this.isStrike(currentFrame.roll2) || this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
-              const bonusRoll = Math.floor(Math.random() * 11); // Generate random number between 0 and 10
-              currentFrame.roll3 = bonusRoll;
-              currentFrame.score += bonusRoll;
-          } else {
-            currentFrame.roll3 = undefined;
-          }
-        }
-
-        // Update the player's frames and calculate total score
-        currentPlayer.frames[frameIndex] = currentFrame;
-        this.calculateTotalScore(currentPlayer.frames);
-      }
-    }
-  }
-
   showNewPlayerForm() {
     this.showForm = true;
   }
 
   startNewGane(): void {
     this.players = [];
+    this.currentPlayerIndex = 0;
+    this.currentRollIndex = 0;
+    this.currentFrameIndex = 0;
   }
+
+  // Method to move to the next frame
+  moveToNextFrame() {
+    const currentPlayer = this.players[this.currentPlayerIndex];
+    const currentFrame = currentPlayer.frames[this.currentFrameIndex];
+
+    // Check if it's the 10th frame
+    if (this.currentFrameIndex === 9) {
+      // Check if there's a third roll (bonus roll) in the 10th frame
+      if (!currentFrame.roll3) {
+        // Move to the bonus roll
+        currentFrame.roll3 = 0;
+        this.currentRollIndex = 3; // Set the current roll index to 3 for the bonus roll
+      } else {
+        // All rolls in the 10th frame have been completed, move to the next player
+        this.currentPlayerIndex++;
+        this.currentFrameIndex = 0; // Move back to the first frame for the next player
+        this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll
+      }
+    } else {
+      // Move to the next frame
+      this.currentFrameIndex++;
+      this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll
+    }
+
+    // Check if the game is over
+    if (this.isGameOver) {
+      this.currentPlayerIndex = 0; // Reset back to the first player
+    }
+  }
+
+  // Method to handle when a button is clicked
+  onRollButtonClicked(pins: number) {
+    const currentPlayer = this.players[this.currentPlayerIndex];
+    const currentFrame = currentPlayer.frames[this.currentFrameIndex];
+
+    if (!currentFrame.roll1) {
+      currentFrame.roll1 = pins;
+      if (this.isStrike(pins)) {
+        // Set roll2 to 0 and move to the next frame or player
+        currentFrame.roll2 = 0;
+
+        if (this.currentFrameIndex === 9) {
+          // 10th frame, check if it's the last player or not
+          if (this.currentPlayerIndex === this.players.length - 1) {
+            // Last player, move to the next frame
+            this.moveToNextFrame();
+          } else {
+            // Move to the next player
+            this.currentPlayerIndex++;
+          }
+        } else {
+          // Regular frame, move to the next frame or player
+          if (this.currentPlayerIndex === this.players.length - 1) {
+            this.moveToNextFrame();
+          } else {
+            // Move to the next player
+            this.currentPlayerIndex++;
+          }
+        }
+      }
+    } else if (!currentFrame.roll2) {
+      currentFrame.roll2 = pins;
+
+      if (this.currentFrameIndex === 9) {
+        // 10th frame
+        if (this.isStrike(currentFrame.roll1) || this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
+          // Strike or spare scored, move to the next frame or player
+          if (currentFrame.roll1 === 10 && currentFrame.roll2 === 0) {
+            // If the first roll is a strike, allow an extra roll in the 10th frame
+            // Do nothing here, wait for the third roll to be set
+          } else if (this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
+            // If a spare is scored, allow two rolls in the 10th frame
+            if (this.currentPlayerIndex === this.players.length - 1) {
+              // Last player, move to the next frame
+              this.moveToNextFrame();
+            } else {
+              // Move to the next player
+              this.currentPlayerIndex++;
+            }
+          } else {
+            this.moveToNextFrame();
+          }
+        } else {
+          // Neither strike nor spare, move to the next frame or player
+          this.moveToNextFrame();
+        }
+      } else {
+        // Regular frame
+        if (this.isStrike(currentFrame.roll1)) {
+          // Strike scored, set roll2 to 0 and move to the next frame or player
+          currentFrame.roll2 = 0;
+
+          // Last player, move to the next frame
+          if (this.currentPlayerIndex === this.players.length - 1) {
+            this.moveToNextFrame();
+          } else {
+            // Move to the next player
+            this.currentPlayerIndex++;
+          }
+        } else if (currentFrame.roll1 + currentFrame.roll2 === 10) {
+          // Spare scored, move to the next frame or player
+          if (this.currentPlayerIndex === this.players.length - 1) {
+            // Last player, move to the next frame
+            this.moveToNextFrame();
+          } else {
+            // Move to the next player
+            this.currentPlayerIndex++;
+          }
+        } else {
+          // Neither strike nor spare, move to the next frame or player
+          if (this.currentPlayerIndex === this.players.length - 1) {
+            // Last player, move to the next frame
+            this.moveToNextFrame();
+          } else {
+            // Move to the next player
+            this.currentPlayerIndex++;
+          }
+        }
+      }
+    } else if (this.currentFrameIndex === 9 && !currentFrame.roll3) {
+      // 10th frame, third roll
+      currentFrame.roll3 = pins;
+
+      if (this.currentPlayerIndex === this.players.length - 1) {
+        // Last player, move to the next frame
+        this.moveToNextFrame();
+      } else {
+        // Move to the next player
+        this.currentPlayerIndex++;
+      }
+    }
+  }
+
 }

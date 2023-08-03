@@ -21,6 +21,16 @@
 
 }
 
+.scoreboard-buttons {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 80%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  transform: translate(-50%, -50%);
+}
+
 .scoreboard-table {
   position: absolute;
   top: 50%;
@@ -53,7 +63,7 @@
   }
 }
 
-.btn-container {
+.buttons-container {
   .action-btn {
     display: inline-block;
     padding: 8px 12px;

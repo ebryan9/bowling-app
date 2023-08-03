@@ -10,7 +10,7 @@
           Player name is required.
         </div>
         <div>
-          <button [disabled]="playerNameControl.invalid" class="action-btn" (click)="addPlayer()">Add Player</button>
+          <button [disabled]="playerNameControl.invalid" class="action-btn" (click)="addPlayer()">Add</button>
         </div>
         <div>
           <button class="action-btn" (click)="showForm = false">Cancel</button>
@@ -20,6 +20,16 @@
   </div>
 
   <ng-container *ngIf="players.length > 0; else newGame">
+    <div class="scoreboard-buttons">
+      <app-rolls
+        [players]="players"
+        [currentPlayerIndex]="currentPlayerIndex"
+        [currentFrameIndex]="currentFrameIndex"
+        [gameOver]="isGameOver"
+        [tenthFrame]="isTenthFrame"
+        (rollSelected)="onRollButtonClicked($event)"
+      ></app-rolls>
+    </div>
     <table class="scoreboard-table">
       <tr>
         <th></th>
@@ -39,9 +49,12 @@
             </div>
 
             <div class="roll-2">
-              <ng-container>
+              <ng-container *ngIf="!isStrike(frame.roll1  ?? 0) && isSpare((frame.roll1  ?? 0), (frame.roll2  ?? 0)); else strike">
                 {{ !isStrike(frame.roll1  ?? 0) && isSpare((frame.roll1  ?? 0), (frame.roll2  ?? 0)) ? '/' : frame.roll2 }}
               </ng-container>
+              <ng-template #strike>
+                {{ isStrike(frame.roll2 ?? 0) ? 'X' : frame.roll2 }}
+              </ng-template>
             </div>
 
             <div class="roll-3" *ngIf="frame.roll3">
@@ -66,9 +79,8 @@
     </div>
   </ng-template>
 
-  <div class="btn-container">
+  <div class="buttons-container">
     <button class="action-btn" (click)="showNewPlayerForm()">Add New Player</button>
-    <button class="action-btn" (click)="simulateGamePlay()">Start Game Simulation</button>
-    <button class="action-btn" (click)="startNewGane()">New Game</button>
+    <button class="action-btn" (click)="startNewGane()">Start New Game</button>
   </div>
 </div>

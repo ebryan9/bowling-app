@@ -17,8 +17,8 @@ export class RollsComponent {
     this.rollSelected.emit(index);
   }
 
-   // Function to filter the buttons based on the remaining pins
-   filterRolls(): number[] {
+  // Function to filter the buttons based on the remaining pins
+  filterRolls(): number[] {
     const currentPlayer = this.players[this.currentPlayerIndex];
     const currentFrame = currentPlayer.frames[this.currentFrameIndex];
 

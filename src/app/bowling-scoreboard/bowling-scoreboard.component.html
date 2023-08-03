@@ -5,15 +5,15 @@
     <form [formGroup]="newPlayerForm">
       <div class="form-group">
         <label for="name">Player Name:</label>
-        <input type="text" id="name" [formControl]="playerNameControl" required>
+        <input type="text" id="name" class="form-control" [formControl]="playerNameControl" required>
         <div *ngIf="playerNameControl.invalid && playerNameControl.touched" class="error-message">
           Player name is required.
         </div>
         <div>
-          <button [disabled]="playerNameControl.invalid" class="action-btn" (click)="addPlayer()">Add</button>
+          <button [disabled]="playerNameControl.invalid" class="btn action-btn" (click)="addPlayer()">Add</button>
         </div>
         <div>
-          <button class="action-btn" (click)="showForm = false">Cancel</button>
+          <button class="btn action-btn" (click)="showForm = false">Cancel</button>
         </div>
       </div>
     </form>
@@ -79,8 +79,8 @@
     </div>
   </ng-template>
 
-  <div class="buttons-container">
-    <button class="action-btn" (click)="showNewPlayerForm()">Add New Player</button>
-    <button class="action-btn" (click)="startNewGane()">Start New Game</button>
+  <div class="buttons-container" *ngIf="!showForm">
+    <button class="btn action-btn" (click)="showNewPlayerForm()">Add New Player</button>
+    <button class="btn action-btn" (click)="startNewGane()">Start New Game</button>
   </div>
 </div>

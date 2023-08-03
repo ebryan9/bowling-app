@@ -1,7 +1,97 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* ==========================================================================
+   Box Sizing
+   ========================================================================== */
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*:before {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
 html {
   height: auto;
   width: 100%;
   background: linear-gradient(to top, #001169, #003088, #004ea5, #006dc1, #008cdb);
+}
+
+
+/* ==========================================================================
+Buttons
+========================================================================== */
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid #fff;
+  background-color: transparent;
+  color: #fff;
+  line-height: 1.5;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+    text-decoration: none;;
+  }
+
+  &:disabled {
+    border-color: #666;
+    opacity: .65;
+  }
+}
+
+
+
+/* ==========================================================================
+Form
+========================================================================== */
+
+input, button, select, textarea {
+  font-weight: 300;
+  outline: 0;
+}
+
+label {
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+input[type="submit"] {
+  cursor: pointer;
+}
+
+
+.form-control {
+  display: block;
+  padding: 6px 12px;
+  border: 1px solid #ced4da;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #001169;
+  background-color: #fff;
+  background-image: none;
+  background-clip: padding-box;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }

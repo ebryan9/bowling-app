@@ -24,7 +24,7 @@ export class RollsComponent {
     const currentPlayer = this.players[this.currentPlayerIndex];
     const currentFrame = currentPlayer.frames[this.currentFrameIndex];
 
-    if (currentFrame.roll1 === undefined) {
+    if (currentFrame.roll1 === undefined || this.currentFrameIndex === 9) {
       // Show buttons for 0 to 10 pins for the first roll
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     } else if (currentFrame.roll1 === 10) {

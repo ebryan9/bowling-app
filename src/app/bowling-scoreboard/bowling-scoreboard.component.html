@@ -1,46 +1,74 @@
 <div class="scoreboard-container">
   <h1>Bowling Scoreboard</h1>
 
-  <table class="scoreboard-table">
-    <tr>
-      <th></th>
-      <th *ngFor="let frameNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">{{ frameNumber }}</th>
-      <th>Total</th>
-    </tr>
-    <!-- Table rows for players -->
-    <tr *ngFor="let player of players">
-      <td>{{ player.name }}</td>
-      <!-- Frame scores for each player -->
-      <td *ngFor="let frame of player.frames; index as i">
-        <div class="rolls">
-          <div class=""roll-1>
-            <ng-container>
-              {{ isStrike(frame.roll1) ? 'X' : frame.roll1 }}
-            </ng-container>
-          </div>
-
-          <div class="roll-2">
-            <ng-container>
-              {{ !isStrike(frame.roll1) && isSpare(frame.roll1, frame.roll2) ? '/' : frame.roll2 }}
-            </ng-container>
-          </div>
-
-          <div class="roll-3" *ngIf="frame.roll3">
-            <ng-container>
-              {{ isStrike(frame.roll3) ? 'X' : frame.roll3 }}
-            </ng-container>
-          </div>
-
+  <div class="add-player-form" *ngIf="showForm">
+    <form [formGroup]="newPlayerForm">
+      <div class="form-group">
+        <label for="name">Player Name:</label>
+        <input type="text" id="name" [formControl]="playerNameControl" required>
+        <div *ngIf="playerNameControl.invalid && playerNameControl.touched" class="error-message">
+          Player name is required.
         </div>
-
-        <div class="frame-score">
-          {{ calculateFrameScore(player.frames)[i] }}
+        <div>
+          <button [disabled]="playerNameControl.invalid" class="action-btn" (click)="addPlayer()">Add Player</button>
         </div>
-      </td>
-      <!-- Total score for each player -->
-      <td>{{ calculateTotalScore(player.frames) }}</td>
-    </tr>
-  </table>
+        <div>
+          <button class="action-btn" (click)="showForm = false">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
 
-  <button class="simulation-btn" (click)="simulateGamePlay()">Start Game Simulation</button>
+  <ng-container *ngIf="players.length > 0; else newGame">
+    <table class="scoreboard-table">
+      <tr>
+        <th></th>
+        <th *ngFor="let frameNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">{{ frameNumber }}</th>
+        <th>Total</th>
+      </tr>
+      <!-- Table rows for players -->
+      <tr *ngFor="let player of players">
+        <td>{{ player.name }}</td>
+        <!-- Frame scores for each player -->
+        <td *ngFor="let frame of player.frames; index as i">
+          <div class="rolls">
+            <div class=""roll-1>
+              <ng-container>
+                {{ isStrike(frame.roll1  ?? 0) ? 'X' : frame.roll1 }}
+              </ng-container>
+            </div>
+
+            <div class="roll-2">
+              <ng-container>
+                {{ !isStrike(frame.roll1  ?? 0) && isSpare((frame.roll1  ?? 0), (frame.roll2  ?? 0)) ? '/' : frame.roll2 }}
+              </ng-container>
+            </div>
+
+            <div class="roll-3" *ngIf="frame.roll3">
+              <ng-container>
+                {{ isStrike(frame.roll3) ? 'X' : frame.roll3 }}
+              </ng-container>
+            </div>
+
+          </div>
+          <div class="frame-score">
+            {{ calculateFrameScore(player.frames)[i] }}
+          </div>
+        </td>
+        <!-- Total score for each player -->
+        <td>{{ calculateTotalScore(player.frames) }}</td>
+      </tr>
+    </table>
+  </ng-container>
+  <ng-template #newGame>
+    <div class="new-game-container" >
+      <div>Please add a new player to start a new game</div>
+    </div>
+  </ng-template>
+
+  <div class="btn-container">
+    <button class="action-btn" (click)="showNewPlayerForm()">Add New Player</button>
+    <button class="action-btn" (click)="simulateGamePlay()">Start Game Simulation</button>
+    <button class="action-btn" (click)="startNewGane()">New Game</button>
+  </div>
 </div>

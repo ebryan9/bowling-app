@@ -82,8 +82,8 @@ export class BowlingScoreboardComponent implements OnInit {
   };
 
 
-    this.bowlingService.createPlayer(newPlayer).subscribe((res) => {
-      console.log("Player created: ", res);
+    this.bowlingService.createPlayer(newPlayer).subscribe((player) => {
+      console.log(`Player created: ${JSON.stringify(player)}.`);
     });
 
     this.players.push(newPlayer);
@@ -101,6 +101,7 @@ export class BowlingScoreboardComponent implements OnInit {
     return !this.isStrike(roll1) && roll1 + roll2 === 10;
   }
 
+  // Function to calculate the score for each frame
   calculateFrameScore(frames: Frame[]): number[] {
     // Array to store cumulative frame scores
     const cumulativeFrameScores: number[] = [];
@@ -108,14 +109,15 @@ export class BowlingScoreboardComponent implements OnInit {
     const frameScores: number[] = [];
     let cumulativeTotal = 0;
 
-    for (let i = 0; i < frames.length; i++) {
+    for (let i = 0; i <= frames.length - 1; i++) {
       const frame = frames[i];
       const { roll1, roll2 } = frame;
+      let frameScore = 0; // Initialize frameScore
 
       if (this.isStrike(roll1 ?? 0)) {
         const nextFrame = frames[i + 1];
         const nextNextFrame = frames[i + 2];
-        let frameScore = 10;
+        frameScore = 10;
 
         if (nextFrame) {
           const nextFrameScore = (nextFrame.roll1 ?? 0) + (nextFrame.roll2 ?? 0);
@@ -130,37 +132,37 @@ export class BowlingScoreboardComponent implements OnInit {
             }
           }
         }
-        frameScores.push(frameScore);
-        cumulativeFrameScores.push(frameScore);
-      } else if (this.isSpare((roll1 ?? 0), (roll2 ?? 0))) {
+      } else if (this.isSpare(roll1 ?? 0, roll2 ?? 0)) {
         const nextFrame = frames[i + 1];
         if (nextFrame) {
-          const frameScore = 10 + (nextFrame.roll1 ?? 0);
-          frameScores.push(frameScore);
-          cumulativeFrameScores.push(frameScore);
+          frameScore = 10 + (nextFrame.roll1 ?? 0);
         }
       } else {
-        const frameScore = (roll1 ?? 0) + (roll2 ?? 0);
-        frameScores.push(frameScore);
-        cumulativeFrameScores.push(frameScore);
+        frameScore = (roll1 ?? 0) + (roll2 ?? 0);
       }
 
-      cumulativeTotal += cumulativeFrameScores[cumulativeFrameScores.length - 1];
-      cumulativeFrameScores[cumulativeFrameScores.length - 1] = cumulativeTotal;
+      frameScores.push(frameScore);
+      if (i < 9) {
+        cumulativeTotal += frameScore; // Add to cumulativeTotal only until the 9th frame
+      }
+      cumulativeFrameScores.push(cumulativeTotal);
     }
 
     // Handle the 10th frame
     const lastFrame = frames[frames.length - 1];
 
     if (lastFrame.roll3 !== undefined) {
-      cumulativeTotal += (lastFrame.roll2 ?? 0) + (lastFrame.roll3 ?? 0);
+      cumulativeTotal += (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0) + (lastFrame.roll3 ?? 0);
       cumulativeFrameScores[frames.length - 1] = cumulativeTotal;
-
       frameScores[frames.length - 1] = (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0) + (lastFrame.roll3 ?? 0);
+    } else if (lastFrame.roll2 !== undefined) {
+      // Special handling for the 10th frame if it's a spare
+      cumulativeTotal += (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0);
+      cumulativeFrameScores[frames.length - 1] = cumulativeTotal;
+      frameScores[frames.length - 1] = (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0);
     }
 
     this.frameTotals = { cumulativeFrameScores: cumulativeFrameScores, frameScores: frameScores };
-
     return this.frameTotals.cumulativeFrameScores;
   }
 

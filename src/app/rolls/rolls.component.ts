@@ -20,7 +20,7 @@ export class RollsComponent {
   }
 
    // Function to filter the buttons based on the remaining pins
-   filterButtons(): number[] {
+   filterRolls(): number[] {
     const currentPlayer = this.players[this.currentPlayerIndex];
     const currentFrame = currentPlayer.frames[this.currentFrameIndex];
 
@@ -32,7 +32,7 @@ export class RollsComponent {
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     } else {
       // Show buttons for 0 to remaining pins after the first roll
-      const remainingPinsAfterRoll1 = 10 - currentFrame.roll1;
+      const remainingPinsAfterRoll1 = 10 - (currentFrame.roll1 ?? 0);
       return Array.from({ length: remainingPinsAfterRoll1 + 1 }, (_, i) => i);
     }
   }

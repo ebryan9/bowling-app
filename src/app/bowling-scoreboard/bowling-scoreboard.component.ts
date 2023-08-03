@@ -2,11 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Player } from '../_models/player.model';
 import { Frame, FrameTotals } from '../_models/frame.model';
 import { BowlingService } from '../_services/bowling.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-interface INewPlayerForm {
-  playerNameControl?: FormControl<string | null>;
-}
 @Component({
   selector: 'app-bowling-scoreboard',
   templateUrl: './bowling-scoreboard.component.html',
@@ -19,12 +15,8 @@ export class BowlingScoreboardComponent implements OnInit {
   frameTotals: FrameTotals = {} as FrameTotals;
   players: Player[] = [];
   showForm: boolean = false;
-  newPlayer: Player = {} as Player;
   selectedButtons: { [playerIndex: number]: number[] } = {};
   remainingPinsAfterRoll1: number = 10;
-
-  newPlayerForm: FormGroup<INewPlayerForm>;
-  playerNameControl: FormControl<string | null>;
 
   get isTenthFrame(): boolean {
     return this.currentFrameIndex === 9;
@@ -34,20 +26,7 @@ export class BowlingScoreboardComponent implements OnInit {
     return this.currentFrameIndex === 10 && this.currentPlayerIndex === 0;
   }
 
-  constructor(private readonly bowlingService: BowlingService) {
-    this.playerNameControl = new FormControl(null, [Validators.required],);
-
-    this.newPlayerForm = new FormGroup<INewPlayerForm>({
-      playerNameControl: this.playerNameControl
-    });
-
-    this.playerNameControl.valueChanges.pipe().subscribe((name) => {
-      if (name) {
-        this.newPlayer.name = name;
-      }
-    })
-
-  }
+  constructor(private readonly bowlingService: BowlingService) {}
 
   ngOnInit(): void {
     this.getPlayers();
@@ -59,14 +38,10 @@ export class BowlingScoreboardComponent implements OnInit {
     });
   }
 
-  addPlayer(): void {
-    if (this.newPlayerForm.invalid) {
-      return;
-    }
-
+  addPlayer(playerName: string): void {
     const newPlayer: Player = {
       id: this.players.length + 1,
-      name: this.newPlayer.name,
+      name: playerName,
       frames: [
         { roll1: undefined, roll2: undefined },
         { roll1: undefined, roll2: undefined },
@@ -83,12 +58,11 @@ export class BowlingScoreboardComponent implements OnInit {
 
 
     this.bowlingService.createPlayer(newPlayer).subscribe((player) => {
-      console.log(`Player created: ${player}.`);
+      console.log(`Player created: ${JSON.stringify(player)}.`);
     });
 
     this.players.push(newPlayer);
     this.showForm = false;
-    this.newPlayerForm.reset();
   }
 
   // Check if it's a strike

@@ -1,22 +1,11 @@
 <div class="scoreboard-container">
   <h1>Bowling Scoreboard</h1>
 
-  <div class="add-player-form" *ngIf="showForm">
-    <form [formGroup]="newPlayerForm">
-      <div class="form-group">
-        <label for="name">Player Name:</label>
-        <input type="text" id="name" class="form-control" [formControl]="playerNameControl" required>
-        <div *ngIf="playerNameControl.invalid && playerNameControl.touched" class="error-message">
-          Player name is required.
-        </div>
-        <div>
-          <button [disabled]="playerNameControl.invalid" class="btn action-btn" (click)="addPlayer()">Add</button>
-        </div>
-        <div>
-          <button class="btn action-btn" (click)="showForm = false">Cancel</button>
-        </div>
-      </div>
-    </form>
+  <div *ngIf="showForm">
+    <app-add-player-form
+      (newPlayerCreated)="addPlayer($event)"
+      (displayForm)="showNewPlayerForm()">
+    </app-add-player-form>
   </div>
 
   <ng-container *ngIf="players.length > 0; else newGame">
@@ -35,7 +24,7 @@
         <th>Total</th>
       </tr>
       <!-- Table rows for players -->
-      <tr *ngFor="let player of players; index as playerIndex" [ngClass]="{ 'active-player': playerIndex === currentPlayerIndex }">
+      <tr *ngFor="let player of players; index as playerIndex" [ngClass]="{ 'active-player': playerIndex === currentPlayerIndex && players.length > 1 }">
         <td>{{ player.name }}</td>
         <!-- Frame scores for each player -->
         <td *ngFor="let frame of player.frames; index as frameIndex" [ngClass]="{ 'active-frame': playerIndex === currentPlayerIndex && frameIndex === currentFrameIndex }">

@@ -1,1 +1,17 @@
-<p>add-player-form works!</p>
+<div class="add-player-form">
+  <form [formGroup]="newPlayerForm">
+    <div class="form-group">
+      <label for="name">Player Name:</label>
+      <input type="text" id="name" class="form-control" [formControl]="playerNameControl" required>
+      <div *ngIf="playerNameControl.invalid && playerNameControl.touched" class="error-message">
+        Player name is required.
+      </div>
+      <div>
+        <button [disabled]="playerNameControl.invalid" class="btn action-btn" (click)="createNewPlayer(playerName)">Add</button>
+      </div>
+      <div>
+        <button class="btn action-btn" (click)="this.hideForm()">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>

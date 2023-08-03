@@ -60,7 +60,7 @@
       align-items: center;
       margin-bottom: 5px;
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.8);
+      color: #fff;
     }
   }
 
@@ -80,35 +80,5 @@
       margin-left: 10px;
     }
   }
-}
-
-.add-player-form {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 10px 0 40px;
-
-  .form-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: 10px;
-  }
-
-  label {
-    margin-right: 5px;
-  }
-
-  .error-message {
-    color: red;
-    margin-left: 5px;
-  }
-
-  .action-btn {
-    margin-left: 5px;
-    cursor: pointer;
-  }
-
 }
 

@@ -62,7 +62,7 @@ export class BowlingScoreboardComponent implements OnInit {
     });
 
     this.players.push(newPlayer);
-    this.showForm = false;
+    // this.showForm = false;
   }
 
   // Check if it's a strike
@@ -150,8 +150,8 @@ export class BowlingScoreboardComponent implements OnInit {
     return totalScore;
   }
 
-  showNewPlayerForm() {
-    this.showForm = true;
+  showNewPlayerForm(show: boolean) {
+    this.showForm = show;
   }
 
   startNewGane(): void {

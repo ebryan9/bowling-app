@@ -4,7 +4,7 @@
   <div *ngIf="showForm">
     <app-add-player-form
       (newPlayerCreated)="addPlayer($event)"
-      (displayForm)="showNewPlayerForm()">
+      (displayForm)="showNewPlayerForm($event)">
     </app-add-player-form>
   </div>
 
@@ -67,7 +67,7 @@
   </ng-template>
 
   <div class="buttons-container" *ngIf="!showForm">
-    <button class="btn action-btn" (click)="showNewPlayerForm()">Add New Player</button>
+    <button class="btn action-btn" (click)="showNewPlayerForm(true)">Add New Player</button>
     <button class="btn action-btn" (click)="startNewGane()">Start New Game</button>
   </div>
 </div>

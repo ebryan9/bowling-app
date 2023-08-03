@@ -41,15 +41,11 @@ export class AddPlayerFormComponent {
     }
 
     this.newPlayerCreated.emit(playerName);
-    this.displayForm.emit(false);
+    this.showForm(false);
     this.newPlayerForm.reset();
   }
 
-  showForm() {
-    this.displayForm.emit();
-  }
-
-  hideForm() {
-    this.displayForm.emit(false);
+  showForm(evt: boolean) {
+    this.displayForm.emit(evt);
   }
 }

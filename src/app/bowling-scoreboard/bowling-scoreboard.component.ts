@@ -242,16 +242,25 @@ export class BowlingScoreboardComponent implements OnInit {
 
   // Method to move to the next player's next frame
   moveToNextPlayerNextFrame() {
+    const currentPlayer = this.players[this.currentPlayerIndex];
+    const currentFrame = currentPlayer.frames[this.currentFrameIndex];
+
     // Check if all players have completed their turns in the current frame
     const allPlayersCompletedFrame = this.players.every(
       (player) => player.frames[this.currentFrameIndex].roll1 !== undefined && player.frames[this.currentFrameIndex].roll2 !== undefined
     );
 
     if (allPlayersCompletedFrame) {
-      // Move to the next frame for the first player
-      this.currentPlayerIndex = 0;
-      this.currentFrameIndex++;
-      this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll of the next frame
+      // Check if it's the last player's turn in the 10th frame
+      if (this.currentPlayerIndex === this.players.length - 1) {
+        // Move to the next frame for the first player
+        this.currentPlayerIndex = 0;
+        this.currentFrameIndex++;
+        this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll of the next frame
+      } else {
+        // Move to the next player for the current frame
+        this.moveToNextPlayer();
+      }
     } else {
       // Move to the next player for the current frame
       this.moveToNextPlayer();
@@ -262,30 +271,13 @@ export class BowlingScoreboardComponent implements OnInit {
   onRollButtonClicked(pins: number) {
     const currentPlayer = this.players[this.currentPlayerIndex];
     const currentFrame = currentPlayer.frames[this.currentFrameIndex];
+
     if (!currentFrame.roll1) {
       currentFrame.roll1 = pins;
-      if (this.isStrike(pins)) {
+      if (this.isStrike(pins) && this.currentFrameIndex !== 9) {
         // Set roll2 to 0 and move to the next frame or player
         currentFrame.roll2 = 0;
-        if (this.currentFrameIndex === 9) {
-          this.currentRollIndex = 3;
-          // Handle 10th frame and check if it's the last player
-          if (this.currentPlayerIndex === this.players.length - 1) {
-            // Last player, move to the next frame
-            this.moveToNextFrame();
-          } else {
-            // Move to the next player
-            this.currentPlayerIndex++;
-          }
-        } else {
-          // Regular frame, move to the next frame or player
-          if (this.currentPlayerIndex === this.players.length - 1) {
-            this.moveToNextFrame();
-          } else {
-            // Move to the next player
-            this.currentPlayerIndex++;
-          }
-        }
+        this.moveToNextPlayerNextFrame();
       }
     } else if (!currentFrame.roll2) {
       currentFrame.roll2 = pins;
@@ -293,39 +285,22 @@ export class BowlingScoreboardComponent implements OnInit {
       if (this.currentFrameIndex === 9) {
         // Handle 10th frame
         if (this.isStrike(currentFrame.roll1)) {
+          // For a strike in the 10th frame, allow two additional rolls
           this.currentRollIndex = 3;
         } else if (this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
-            // If a spare is scored, allow additional roll in the 10th frame
-            this.currentRollIndex = 3;
-            if (this.currentPlayerIndex === this.players.length - 1) {
-              // Last player, move to the next frame
-              this.moveToNextFrame();
-            } else {
-              // Move to the next player
-              this.currentPlayerIndex++;
-            }
+          // For a spare in the 10th frame, allow one additional roll
+          this.currentRollIndex = 3;
         } else {
           // Regular frame, move to the next frame or player
-          if (this.currentPlayerIndex === this.players.length - 1) {
-            this.moveToNextFrame();
-          } else {
-            // Move to the next player
-            this.currentPlayerIndex++;
-          }
+          this.moveToNextPlayerNextFrame();
         }
       } else {
         // Regular frame, move to the next frame or player
-        if (this.currentPlayerIndex === this.players.length - 1) {
-          this.moveToNextFrame();
-        } else {
-          // Move to the next player
-          this.currentPlayerIndex++;
-        }
+        this.moveToNextPlayerNextFrame();
       }
     } else {
       // Third roll in the 10th frame
       if (this.currentFrameIndex === 9 && this.currentRollIndex === 3) {
-        // Hande 10th frame and third roll
         currentFrame.roll3 = pins;
         this.moveToNextPlayerNextFrame();
       }

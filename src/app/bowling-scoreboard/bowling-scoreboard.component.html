@@ -25,8 +25,6 @@
         [players]="players"
         [currentPlayerIndex]="currentPlayerIndex"
         [currentFrameIndex]="currentFrameIndex"
-        [gameOver]="isGameOver"
-        [tenthFrame]="isTenthFrame"
         (rollSelected)="onRollButtonClicked($event)"
       ></app-rolls>
     </div>
@@ -37,10 +35,10 @@
         <th>Total</th>
       </tr>
       <!-- Table rows for players -->
-      <tr *ngFor="let player of players">
+      <tr *ngFor="let player of players; index as playerIndex" [ngClass]="{ 'active-player': playerIndex === currentPlayerIndex }">
         <td>{{ player.name }}</td>
         <!-- Frame scores for each player -->
-        <td *ngFor="let frame of player.frames; index as i">
+        <td *ngFor="let frame of player.frames; index as frameIndex" [ngClass]="{ 'active-frame': playerIndex === currentPlayerIndex && frameIndex === currentFrameIndex }">
           <div class="rolls">
             <div class=""roll-1>
               <ng-container>
@@ -65,7 +63,7 @@
 
           </div>
           <div class="frame-score">
-            {{ calculateFrameScore(player.frames)[i] }}
+            {{ calculateFrameScore(player.frames)[frameIndex] }}
           </div>
         </td>
         <!-- Total score for each player -->

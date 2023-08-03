@@ -10,8 +10,6 @@ export class RollsComponent {
   @Input() players: Player[] = [];
   @Input() currentPlayerIndex = 0;
   @Input() currentFrameIndex = 0;
-  @Input() gameOver: boolean = true;
-  @Input() tenthFrame: boolean = true;
 
   @Output() rollSelected = new EventEmitter<number>();
 

@@ -19,6 +19,14 @@
     text-align: center;
   }
 
+  .active-player {
+    border: 2px solid red;
+  }
+
+  .active-frame {
+    background-color: lightblue;
+    color: #001169;
+  }
 }
 
 .scoreboard-buttons {

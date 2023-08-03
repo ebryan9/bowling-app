@@ -126,8 +126,6 @@ export class BowlingScoreboardComponent implements OnInit {
             if (nextNextFrame) {
               frameScore += (nextNextFrame.roll1 ?? 0) + (nextNextFrame.roll2 ?? 0);
             }
-          } else {
-            frameScore += nextFrame.roll2 ?? 0;
           }
         }
         frameScores.push(frameScore);
@@ -156,7 +154,7 @@ export class BowlingScoreboardComponent implements OnInit {
       cumulativeTotal += (lastFrame.roll2  ?? 0) + lastFrame.roll3;
       cumulativeFrameScores[frames.length - 1] = cumulativeTotal;
 
-      frameScores[frames.length - 1] = (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0) + lastFrame.roll3
+      frameScores[frames.length - 1] = (lastFrame.roll1 ?? 0) + (lastFrame.roll2 ?? 0) + lastFrame.roll3;
     }
 
     this.frameTotals = { cumulativeFrameScores: cumulativeFrameScores, frameScores: frameScores };
@@ -194,7 +192,7 @@ export class BowlingScoreboardComponent implements OnInit {
     if (this.currentFrameIndex === 9) {
       // Check if there's a third roll (bonus roll) in the 10th frame
       if (!currentFrame.roll3) {
-        // Move to the bonus roll
+        // Bonus roll
         currentFrame.roll3 = 0;
         this.currentRollIndex = 3; // Set the current roll index to 3 for the bonus roll
       } else {
@@ -227,7 +225,7 @@ export class BowlingScoreboardComponent implements OnInit {
         currentFrame.roll2 = 0;
 
         if (this.currentFrameIndex === 9) {
-          // 10th frame, check if it's the last player or not
+          // Handle 10th frame and check if it's the last player
           if (this.currentPlayerIndex === this.players.length - 1) {
             // Last player, move to the next frame
             this.moveToNextFrame();
@@ -249,9 +247,9 @@ export class BowlingScoreboardComponent implements OnInit {
       currentFrame.roll2 = pins;
 
       if (this.currentFrameIndex === 9) {
-        // 10th frame
+        // Handle 10th frame
         if (this.isStrike(currentFrame.roll1) || this.isSpare(currentFrame.roll1, currentFrame.roll2)) {
-          // Strike or spare scored, move to the next frame or player
+          // Move to the next frame or player
           if (currentFrame.roll1 === 10 && currentFrame.roll2 === 0) {
             // If the first roll is a strike, allow an extra roll in the 10th frame
             // Do nothing here, wait for the third roll to be set
@@ -305,7 +303,7 @@ export class BowlingScoreboardComponent implements OnInit {
         }
       }
     } else if (this.currentFrameIndex === 9 && !currentFrame.roll3) {
-      // 10th frame, third roll
+      // Hande 10th frame and third roll
       currentFrame.roll3 = pins;
 
       if (this.currentPlayerIndex === this.players.length - 1) {

@@ -57,9 +57,9 @@
               </ng-template>
             </div>
 
-            <div class="roll-3" *ngIf="frame.roll3">
+            <div class="roll-3">
               <ng-container>
-                {{ isStrike(frame.roll3) ? 'X' : frame.roll3 }}
+                {{ isStrike(frame.roll3 ?? 0) ? 'X' : frame.roll3 }}
               </ng-container>
             </div>
 

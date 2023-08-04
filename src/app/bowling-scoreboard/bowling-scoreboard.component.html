@@ -70,4 +70,7 @@
     <button class="btn action-btn" (click)="showNewPlayerForm(true)" [disabled]="firstPlayerHasMadeFirstRoll">Add New Player</button>
     <button class="btn action-btn" (click)="startNewGane()">Start New Game</button>
   </div>
+
+  <div *ngIf="firstPlayerHasMadeFirstRoll" style="font-size: 18px; font-weight: bold; color: #f1b62e;">Game has started no additional players can be added.</div>
+
 </div>

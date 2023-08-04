@@ -17,6 +17,7 @@ export class BowlingScoreboardComponent implements OnInit {
   showForm: boolean = false;
   selectedButtons: { [playerIndex: number]: number[] } = {};
   remainingPinsAfterRoll1: number = 10;
+  firstPlayerHasMadeFirstRoll: boolean = false;
 
   get isTenthFrame(): boolean {
     return this.currentFrameIndex === 9;
@@ -159,6 +160,7 @@ export class BowlingScoreboardComponent implements OnInit {
     this.currentPlayerIndex = 0;
     this.currentRollIndex = 0;
     this.currentFrameIndex = 0;
+    this.firstPlayerHasMadeFirstRoll = false;
   }
 
   // Method to move to the next frame
@@ -248,6 +250,12 @@ export class BowlingScoreboardComponent implements OnInit {
 
     if (!currentFrame.roll1) {
       currentFrame.roll1 = pins;
+
+       // Set firstPlayerHasMadeFirstRoll to true when the first player makes the first roll
+      if (this.currentPlayerIndex === 0) {
+        this.firstPlayerHasMadeFirstRoll = true;
+      }
+
       if (this.isStrike(pins) && this.currentFrameIndex !== 9) {
         // Set roll2 to 0 and move to the next frame or player
         currentFrame.roll2 = 0;

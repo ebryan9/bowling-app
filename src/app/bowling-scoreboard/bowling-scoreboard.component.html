@@ -67,7 +67,7 @@
   </ng-template>
 
   <div class="buttons-container" *ngIf="!showForm">
-    <button class="btn action-btn" (click)="showNewPlayerForm(true)">Add New Player</button>
+    <button class="btn action-btn" (click)="showNewPlayerForm(true)" [disabled]="firstPlayerHasMadeFirstRoll">Add New Player</button>
     <button class="btn action-btn" (click)="startNewGane()">Start New Game</button>
   </div>
 </div>

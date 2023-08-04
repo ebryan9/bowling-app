@@ -206,7 +206,7 @@ export class BowlingScoreboardComponent implements OnInit {
     const currentPlayer = this.players[this.currentPlayerIndex];
     const currentFrame = currentPlayer.frames[this.currentFrameIndex];
 
-    if (!currentFrame.roll1) {
+    if (currentFrame.roll1 === undefined) {
       currentFrame.roll1 = pins;
 
        // Set firstPlayerHasMadeFirstRoll to true when the first player makes the first roll
@@ -219,7 +219,7 @@ export class BowlingScoreboardComponent implements OnInit {
         currentFrame.roll2 = 0;
         this.moveToNextPlayerNextFrame();
       }
-    } else if (!currentFrame.roll2) {
+    } else if (currentFrame.roll2 === undefined) {
       currentFrame.roll2 = pins;
 
       if (this.currentFrameIndex === 9) {

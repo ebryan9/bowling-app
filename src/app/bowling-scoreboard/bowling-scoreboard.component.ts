@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Player } from '../_models/player.model';
 import { Frame, FrameTotals } from '../_models/frame.model';
-import { BowlingService } from '../_services/bowling.service';
 
 @Component({
   selector: 'app-bowling-scoreboard',
   templateUrl: './bowling-scoreboard.component.html',
   styleUrls: ['./bowling-scoreboard.component.scss']
 })
-export class BowlingScoreboardComponent implements OnInit {
+export class BowlingScoreboardComponent {
   currentPlayerIndex: number = 0;
   currentRollIndex: number = 0;
   currentFrameIndex: number = 0;
@@ -27,17 +26,7 @@ export class BowlingScoreboardComponent implements OnInit {
     return this.currentFrameIndex === 10 && this.currentPlayerIndex === 0;
   }
 
-  constructor(private readonly bowlingService: BowlingService) {}
-
-  ngOnInit(): void {
-    this.getPlayers();
-  }
-
-  getPlayers() {
-    this.bowlingService.getPlayers().subscribe((players: any) => {
-      this.players = players;
-    });
-  }
+  constructor() {}
 
   addPlayer(playerName: string): void {
     const newPlayer: Player = {
@@ -57,13 +46,7 @@ export class BowlingScoreboardComponent implements OnInit {
       ],
   };
 
-
-    this.bowlingService.createPlayer(newPlayer).subscribe((player) => {
-      console.log(`Player created: ${JSON.stringify(player)}.`);
-    });
-
     this.players.push(newPlayer);
-    // this.showForm = false;
   }
 
   // Check if it's a strike

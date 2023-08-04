@@ -163,48 +163,6 @@ export class BowlingScoreboardComponent implements OnInit {
     this.firstPlayerHasMadeFirstRoll = false;
   }
 
-  // Method to move to the next frame
-  moveToNextFrame() {
-    const currentPlayer = this.players[this.currentPlayerIndex];
-    const currentFrame = currentPlayer.frames[this.currentFrameIndex];
-
-    // Check if it's the 10th frame
-    if (!currentFrame.roll3 && this.currentFrameIndex === 9) {
-      // Check if there's a third roll (bonus roll) in the 10th frame
-      if (this.isStrike(currentFrame.roll1 ?? 0)) {
-        // Bonus roll
-        currentFrame.roll3 = 0;
-        this.currentRollIndex = 3;
-      } else if (this.isStrike(currentFrame.roll2 ?? 0) || this.isSpare(currentFrame.roll1 ?? 0, currentFrame.roll2 ?? 0)) {
-        // Bonus roll
-        currentFrame.roll3 = 0;
-        this.currentRollIndex = 3;
-      } else {
-        // All rolls in the 10th frame have been completed, move to the next player's next frame
-        this.currentPlayerIndex = 0; // Move back to the first player
-        this.currentFrameIndex++;
-        this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll of the next frame
-      }
-    } else {
-      // Move to the next frame for the first player
-      this.currentPlayerIndex++;
-      if (this.currentPlayerIndex === this.players.length) {
-        // Move back to the first player and advance to the next frame
-        this.currentPlayerIndex = 0;
-        this.currentFrameIndex++;
-        this.currentRollIndex = 1; // Reset the current roll index to 1 for the first roll of the next frame
-      } else {
-        // Reset the current roll index to 1 for the first roll of the next frame for the next player
-        this.currentRollIndex = 1;
-      }
-    }
-
-    // Check if the game is over
-    if (this.isGameOver) {
-      this.currentPlayerIndex = 0; // Reset back to the first player
-    }
-  }
-
   // Method to move to the next player
   moveToNextPlayer() {
     if (this.currentPlayerIndex < this.players.length - 1) {
